@@ -8,6 +8,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Startup Name Generator',
+      theme: ThemeData(
+        primaryColor: Colors.white,
+      ),
       home: RandomWords(),
     );
   }
@@ -26,8 +29,12 @@ final biggerFont = const TextStyle(fontSize: 18.0);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Startup Name Generator'),
-    ),
+      appBar: AppBar(
+        title: Text('Startup Name Generator'), 
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.list), onPressed: _pushSaved)
+        ],
+      ),
       body: buildSuggestions(),
     );
   }
@@ -70,6 +77,38 @@ final bool alreadySaved = saved.contains(pair);
           }
         });
       },
+    );
+  }
+
+  void _pushSaved(){
+    Navigator.of(context).push(
+       MaterialPageRoute<void>(  
+      builder: (BuildContext context) {
+        final Iterable<ListTile> tiles = saved.map(
+          (WordPair pair) {
+            return ListTile(
+              title: Text(
+                pair.asPascalCase,
+                style: biggerFont,
+              ),
+            );
+          },
+        );
+        final List<Widget> divided = ListTile
+          .divideTiles(
+            context: context,
+            tiles: tiles,
+          )
+          .toList();
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Saved Suggestuins'),
+            ),
+            body: ListView(children: divided),
+          );
+      },
+    ), 
     );
   }
 }
